@@ -3,7 +3,9 @@ NPM installable package that generates components for react or blade projects.
 
 ## How to install
 Install the package by adding the following devDependency to your package.json:
+
 `"in10-react-header-nav": "github:IN10/IN10-component-generator-nav#1.0.0"`
+
 Notice the version (semver) after the #, use this to bump the version or install an older version of this package.
 
 ## How to use
