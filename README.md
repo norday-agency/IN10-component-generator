@@ -4,9 +4,9 @@ NPM installable package that generates components for react or blade projects.
 The React generator generates a component within 
 
 ## How to install
-Install the package by adding the following dependency to your package.json:
+Install the package by adding the following devDependency to your package.json:
 `"in10-react-header-nav": "github:IN10/IN10-component-generator-nav#1.0.0"`
-Notice the version (semver) after the #, use this to bump the version or install an older version
+Notice the version (semver) after the #, use this to bump the version or install an older version of this package.
 
 ## How to use
 To use the generator, add the following script to your package.json (so within 
@@ -26,8 +26,9 @@ To use the generator, add the following script to your package.json (so within
  folder containing the organisms, molecules and atoms directories. For 
  React this defaults to `components` directory in root of your project. 
  
- For blade project (--blade flag) this defaults to `resources`, should
- be set to the folder containing the sass and views directories.
+ For blade project (--blade flag) this should be set to the folder 
+ containing the sass and views directories. For blade this defaults 
+ to `resources`.
  
  Note that these flags should be added within the script in your package.json, 
  e.g. 
@@ -44,7 +45,7 @@ The react generator expects a project that uses storybook and styled components.
 ## What it does
 The script generates an atomic component for you, either for a IN10 laravel project
 or an IN10 react project. The script provides a wizard where u can choose the type
-(atom or molecule or organism) and name (camelCase forced for blade, PascalCase for react). 
+and name (no spaces or special chars expect '-' and '_'). 
 
 ### For React 
 The following files will be generated in your chosen type folder:
