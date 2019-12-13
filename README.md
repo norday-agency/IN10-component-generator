@@ -29,6 +29,11 @@ To use the generator, add the following script to your package.json (so within
  For blade project (--blade flag) this defaults to `resources`, should
  be set to the folder containing the sass and views directories.
  
+ Note that these flags should be added within the script in your package.json, 
+ e.g. 
+ 
+ `"generate": "component-generator --blade --dir=theme/resources"`
+ 
 ## Dependencies
 Please note that this generator is specifically to be used within the IN10 setups, so 
 the blade generator expects that the project uses blade (what a surprise!), the IN10 styleguide and a
