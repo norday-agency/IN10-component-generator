@@ -11,13 +11,14 @@ Notice the version (semver) after the #, use this to bump the version or install
 ## How to use
 To use the generator, add the following script to your package.json (so within 
     `"scripts": {}`):
+    
  `"generate": "component-generator"`
  
  The script accepts two arguments:
  
  `--blade` 
  
- Use if your working on a laravel/blade project, defaults to `false`
+ Use if you're working on a laravel/blade project, defaults to `false`
  
  
  
@@ -25,7 +26,7 @@ To use the generator, add the following script to your package.json (so within
  
  This should be the base dir to place the components. 
  
- For a react project(so if no --blade flag is set) this would be the 
+ For a react project (no --blade flag set) this would be the 
  folder containing the organisms, molecules and atoms directories. For 
  React this defaults to `components` directory in root of your project. 
  
