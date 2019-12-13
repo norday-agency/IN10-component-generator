@@ -1,4 +1,4 @@
-# IN10-component-generator
+# IN10 Component Generator
 NPM installable package that generates components for react or blade projects. 
 
 ## How to install
