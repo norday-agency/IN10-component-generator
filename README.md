@@ -39,6 +39,9 @@ To use the generator, add the following script to your package.json (so within
  
  `"generate": "component-generator --blade --dir=theme/resources"`
  
+ Then run this with
+ `npm run generate`
+ 
 ## Dependencies
 Please note that this generator is specifically to be used within the IN10 setups, so 
 the blade generator expects that the project uses blade (what a surprise!), the IN10 styleguide and a
