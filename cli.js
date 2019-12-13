@@ -1,51 +1,14 @@
 #!/usr/bin/env node
-require('path');
+require("path");
 const inquirer = require("inquirer");
 const fs = require("fs");
 const replace = require("replace-in-file");
+const argv = require("yargs").argv;
 
-const REACT = false;
-
-let TEMPLATES_DIR = "";
-let BASE_DIR = "";
-let QUESTIONS = [];
-
-if (process.argv[2] !== '--blade') {
-  BASE_DIR = "components";
-  TEMPLATES_DIR = `${__dirname}/react-templates`;
-  QUESTIONS = [
-    {
-      name: "component-type",
-      type: "list",
-      message: "React component type",
-      choices: ["organisms", "molecules", "atoms"]
-    },
-    {
-      name: "component-name",
-      type: "input",
-      message: "Component name:",
-      validate: function(input) {
-        if (/^([A-Za-z\-\_\d])+$/.test(input)) return true;
-        else
-          return "Component name may only include letters, numbers, underscores and dashes.";
-      }
-    }
-  ];
-
-  inquirer.prompt(QUESTIONS).then(answers => {
-    const componentName = answers["component-name"];
-    const componentType = answers["component-type"];
-
-    if (!fs.existsSync(BASE_DIR)) {
-      fs.mkdirSync(BASE_DIR);
-    }
-
-    createReactComponentFiles(componentName, componentType);
-  });
-} else {
-  BASE_DIR = "resources";
-  TEMPLATES_DIR = `${__dirname}/blade-templates`;
-  QUESTIONS = [
+if (argv.blade) {
+  const baseDir = argv.dir || "resources";
+  const templatesDir = `${__dirname}/blade-templates`;
+  const questions = [
     {
       name: "component-type",
       type: "list",
@@ -69,43 +32,87 @@ if (process.argv[2] !== '--blade') {
     }
   ];
 
-  inquirer.prompt(QUESTIONS).then(answers => {
+  inquirer.prompt(questions).then(answers => {
     const componentName = answers["component-name"];
     const componentType = answers["component-type"];
 
-    if (!fs.existsSync(BASE_DIR)) {
-      fs.mkdirSync(BASE_DIR);
+    if (!fs.existsSync(baseDir)) {
+      fs.mkdirSync(baseDir);
     }
     const componentStylesheet = answers["component-scss"];
 
     createBladeComponentFiles(
       componentName,
       componentType,
-      componentStylesheet
+      componentStylesheet,
+      templatesDir,
+      baseDir
+    );
+  });
+} else {
+  const baseDir = argv.dir || "components";
+  const templatesDir = `${__dirname}/react-templates`;
+  const questions = [
+    {
+      name: "component-type",
+      type: "list",
+      message: "React component type",
+      choices: ["organisms", "molecules", "atoms"]
+    },
+    {
+      name: "component-name",
+      type: "input",
+      message: "Component name:",
+      validate: function(input) {
+        if (/^([A-Za-z\-\_\d])+$/.test(input)) return true;
+        else
+          return "Component name may only include letters, numbers, underscores and dashes.";
+      }
+    }
+  ];
+
+  inquirer.prompt(questions).then(answers => {
+    const componentName = answers["component-name"];
+    const componentType = answers["component-type"];
+
+    if (!fs.existsSync(baseDir)) {
+      fs.mkdirSync(baseDir);
+    }
+
+    createReactComponentFiles(
+      componentName,
+      componentType,
+      templatesDir,
+      baseDir
     );
   });
 }
 
-function createReactComponentFiles(componentName, componentType) {
-  const filesToCreate = fs.readdirSync(TEMPLATES_DIR);
+function createReactComponentFiles(
+  componentName,
+  componentType,
+  templatesDir,
+  baseDir
+) {
+  const filesToCreate = fs.readdirSync(templatesDir);
   let firstItem = true;
   filesToCreate.forEach(file => {
-    const origFilePath = `${TEMPLATES_DIR}/${file}`;
+    const origFilePath = `${templatesDir}/${file}`;
 
     // get stats about the current file
     const stats = fs.statSync(origFilePath);
     const componentNamePascal = toPascalCase(componentName);
     const componentTypePascal = toPascalCase(componentType);
 
-    if (!fs.existsSync(`${BASE_DIR}/${componentType}`)) {
-      fs.mkdirSync(`${BASE_DIR}/${componentType}`);
+    if (!fs.existsSync(`${baseDir}/${componentType}`)) {
+      fs.mkdirSync(`${baseDir}/${componentType}`);
     }
 
     if (stats.isFile()) {
       const contents = fs.readFileSync(origFilePath, "utf8");
       const fileWithoutExtension = file.substring(0, file.indexOf("."));
 
-      const writeDir = `${BASE_DIR}/${componentType}/${componentNamePascal}`;
+      const writeDir = `${baseDir}/${componentType}/${componentNamePascal}`;
       let writeFile = `${componentNamePascal}.jsx`;
 
       if (fileWithoutExtension === "story") {
@@ -147,15 +154,13 @@ function createReactComponentFiles(componentName, componentType) {
       replace(replaceOptions)
         .then(() => {
           replace(replaceOptionsForType)
-            .then(() => {
-              console.log("replaced name and type");
-            })
+            .then()
             .catch(() => {
-              console.log("failed at replacing type");
+              console.log("Failed at replacing type");
             });
         })
         .catch(() => {
-          console.log("failed at replacing name");
+          console.log("Failed at replacing name");
         });
     }
   });
@@ -164,15 +169,17 @@ function createReactComponentFiles(componentName, componentType) {
 function createBladeComponentFiles(
   componentName,
   componentType,
-  componentStylesheet
+  componentStylesheet,
+  templatesDir,
+  baseDir
 ) {
-  const filesToCreate = fs.readdirSync(TEMPLATES_DIR);
+  const filesToCreate = fs.readdirSync(templatesDir);
 
   let cssMap = null;
   let cssSpliceString = null;
 
   filesToCreate.forEach(file => {
-    const origFilePath = `${TEMPLATES_DIR}/${file}`;
+    const origFilePath = `${templatesDir}/${file}`;
 
     // get stats about the current file
     const stats = fs.statSync(origFilePath);
@@ -189,32 +196,32 @@ function createBladeComponentFiles(
 
       let writeDir = `views/components/${componentType}/`;
 
-      if (!fs.existsSync(`${BASE_DIR}/views`)) {
-        fs.mkdirSync(`${BASE_DIR}/views`);
+      if (!fs.existsSync(`${baseDir}/views`)) {
+        fs.mkdirSync(`${baseDir}/views`);
       }
 
       switch (fileWithoutExtension) {
         case "component":
-          if (!fs.existsSync(`${BASE_DIR}/views/components`)) {
-            fs.mkdirSync(`${BASE_DIR}/views/components`);
+          if (!fs.existsSync(`${baseDir}/views/components`)) {
+            fs.mkdirSync(`${baseDir}/views/components`);
           }
           writeDir = `views/components/${componentType}/`;
-          if (!fs.existsSync(`${BASE_DIR}/${writeDir}`)) {
-            fs.mkdirSync(`${BASE_DIR}/${writeDir}`);
+          if (!fs.existsSync(`${baseDir}/${writeDir}`)) {
+            fs.mkdirSync(`${baseDir}/${writeDir}`);
           }
           break;
         case "styleguide":
-          if (!fs.existsSync(`${BASE_DIR}/views/styleguide`)) {
-            fs.mkdirSync(`${BASE_DIR}/views/styleguide`);
+          if (!fs.existsSync(`${baseDir}/views/styleguide`)) {
+            fs.mkdirSync(`${baseDir}/views/styleguide`);
           }
           writeDir = `views/styleguide/${componentType}/`;
-          if (!fs.existsSync(`${BASE_DIR}/${writeDir}`)) {
-            fs.mkdirSync(`${BASE_DIR}/${writeDir}`);
+          if (!fs.existsSync(`${baseDir}/${writeDir}`)) {
+            fs.mkdirSync(`${baseDir}/${writeDir}`);
           }
           break;
         case "_style":
-          if (!fs.existsSync(`${BASE_DIR}/sass/`)) {
-            fs.mkdirSync(`${BASE_DIR}/sass/`);
+          if (!fs.existsSync(`${baseDir}/sass/`)) {
+            fs.mkdirSync(`${baseDir}/sass/`);
           }
           switch (componentType) {
             case "organisms":
@@ -234,8 +241,8 @@ function createBladeComponentFiles(
               cssSpliceString = false;
               break;
           }
-          if (!fs.existsSync(`${BASE_DIR}/sass/${cssMap}`)) {
-            fs.mkdirSync(`${BASE_DIR}/sass/${cssMap}`);
+          if (!fs.existsSync(`${baseDir}/sass/${cssMap}`)) {
+            fs.mkdirSync(`${baseDir}/sass/${cssMap}`);
           }
           writeDir = `sass/${cssMap}/_`;
           break;
@@ -244,7 +251,7 @@ function createBladeComponentFiles(
           break;
       }
 
-      const writePath = `${BASE_DIR}/${writeDir}${componentName}.${fileExtension}`;
+      const writePath = `${baseDir}/${writeDir}${componentName}.${fileExtension}`;
 
       fs.writeFileSync(writePath, contents, "utf8");
 
@@ -269,10 +276,10 @@ function createBladeComponentFiles(
   });
 
   if (componentStylesheet && cssSpliceString) {
-    if (!fs.existsSync(`${BASE_DIR}/sass/app.scss`)) {
-      fs.writeFileSync(`${BASE_DIR}/sass/app.scss`, "", "utf8");
+    if (!fs.existsSync(`${baseDir}/sass/app.scss`)) {
+      fs.writeFileSync(`${baseDir}/sass/app.scss`, "", "utf8");
     }
-    const sassAppFile = `${BASE_DIR}/sass/app.scss`;
+    const sassAppFile = `${baseDir}/sass/app.scss`;
 
     const stats = fs.statSync(sassAppFile);
 
@@ -292,9 +299,7 @@ function createBladeComponentFiles(
 
 function replaceComponentName(replaceOptions) {
   replace(replaceOptions)
-    .then(changes => {
-      console.log("Replaced: ", changes.join(", "));
-    })
+    .then()
     .catch(error => {
       console.error("Error occurred:", error);
     });

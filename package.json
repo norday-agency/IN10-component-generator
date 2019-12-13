@@ -1,8 +1,9 @@
 {
   "name": "in10-component-generator",
   "version": "1.0.0",
+  "private": true,
   "description": "Generates atomic components based on templates",
-  "main": "index.js",
+  "main": "cli.js",
   "scripts": {
     "generate": "node cli"
   },
@@ -23,6 +24,7 @@
   "dependencies": {
     "fs": "0.0.1-security",
     "inquirer": "^7.0.0",
-    "replace-in-file": "^3.4.2"
+    "replace-in-file": "^3.4.2",
+    "yargs": "^15.0.2"
   }
 }
