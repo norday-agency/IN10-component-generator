@@ -47,8 +47,7 @@ frontend setup that can handle sass.
 The react generator expects a project that uses storybook and styled components.
  
 ## What it does
-The script generates an atomic component for you, either for a IN10 laravel project
-or an IN10 react project. The script provides a wizard where u can choose the type
+The script generates an atomic component for you. The script provides a wizard where u can choose the type
 and name (no spaces or special chars expect '-' and '_'). 
 
 ### For React 
