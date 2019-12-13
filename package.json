@@ -5,7 +5,7 @@
   "description": "Generates atomic components based on templates",
   "main": "cli.js",
   "scripts": {
-    "generate": "node cli"
+    "generate": "node cli --blade"
   },
   "bin": {
     "component-generator": "./cli.js"

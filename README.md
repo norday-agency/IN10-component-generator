@@ -1,2 +1,77 @@
 # IN10-component-generator
-NPM installable package that generates components for react or laravel projects. 
+NPM installable package that generates components for react or blade projects. 
+
+The React generator generates a component within 
+
+## How to install
+Install the package by adding the following dependency to your package.json:
+`"in10-react-header-nav": "github:IN10/IN10-component-generator-nav#1.0.0"`
+Notice the version (semver) after the #, use this to bump the version or install an older version
+
+## How to use
+To use the generator, add the following script to your package.json (so within 
+    `"scripts": {}`):
+ `"generate": "component-generator"`
+ 
+ The script accepts two arguments:
+ 
+ `--blade` Use if your working on a laravel/blade project, defaults to `false`
+ 
+ 
+ `--dir={YOUR_DIR}` 
+ 
+ This should be the base dir to place the components. 
+ 
+ For a react project(so if no --blade flag is set) this would be the 
+ folder containing the organisms, molecules and atoms directories. For 
+ React this defaults to `components` directory in root of your project. 
+ 
+ For blade project (--blade flag) this defaults to `resources`, should
+ be set to the folder containing the sass and views directories.
+ 
+## Dependencies
+Please note that this generator is specifically to be used within the IN10 setups, so 
+the blade generator expects that the project uses blade (what a surprise!), the IN10 styleguide and a
+frontend setup that can handle sass. 
+
+The react generator expects a project that uses storybook and styled components.
+ 
+## What it does
+The script generates an atomic component for you, either for a IN10 laravel project
+or an IN10 react project. The script provides a wizard where u can choose the type
+(atom or molecule or organism) and name (camelCase forced for blade, PascalCase for react). 
+
+### For React 
+The following files will be generated in your chosen type folder:
+- ComponentName (dir)
+    - ComponentName.jsx (React file with PropTypes and Styled Component wrapped)
+    - ComponentName.styled.js (Styled Component file)
+    - ComponentName.stories.js (Storybook file)
+    
+### For Blade 
+The following files will be generated within the base dir:
+- views (already existing dir)
+    - components (already exisiting dir)
+        - Atoms or Molecules Or Organisms (chosen dir)
+            - componentName.blade.php
+    - styleguide (already existing dir)
+        - Atoms or Molecules Or Organisms (chosen dir)
+            - componentName.blade.php
+For blade, the wizard asks whether to create a stylesheet file, if chosen, it creates:
+- sass (already existing dir)
+    - 04_atoms or 05_molecules Or 06_organisms (chosen dir)
+        - _componentName.scss
+        
+as an addition it will look for app.scss within the sass folder and add the correct import line to it:
+
+`@import '06_organisms/testCase';` 
+  
+     
+## To do
+- Add more options for React generator, e.g. whether to add a styled component and story
+- Possibility to set atomic-type and name with flags, then skip the wizard 
+(e.g. `npm run generate MyAtom --type=atom`)
+- For blade splice in the `@import '06_organisms/testCase';` at the correct position alphabetically (it should splice it in under the correct type already) 
+
+ 
+ 
