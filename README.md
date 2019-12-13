@@ -13,10 +13,13 @@ To use the generator, add the following script to your package.json (so within
  
  The script accepts two arguments:
  
- `--blade` Use if your working on a laravel/blade project, defaults to `false`
+ `--blade` 
+ 
+ Use if your working on a laravel/blade project, defaults to `false`
  
  
- `--dir={YOUR_DIR}` 
+ 
+ `--dir={YOUR_DIR}`  
  
  This should be the base dir to place the components. 
  
