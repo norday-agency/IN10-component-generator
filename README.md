@@ -74,14 +74,14 @@ For blade, the wizard asks whether to create a stylesheet file, if chosen, it cr
         
 as an addition it will look for app.scss within the sass folder and add the correct import line to it:
 
-`@import '06_organisms/testCase';` 
+`@import '06_organisms/componentName';` 
   
      
 ## To do
 - Add more options for React generator, e.g. whether to add a styled component and story
 - Possibility to set atomic-type and name with flags, then skip the wizard 
 (e.g. `npm run generate MyAtom --type=atom`)
-- For blade splice in the `@import '06_organisms/testCase';` at the correct position alphabetically (it should splice it in under the correct type already) 
+- For blade splice in the `@import '06_organisms/componentName';` at the correct position alphabetically (it should splice it in under the correct type already) 
 
 
 ## Other
