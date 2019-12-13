@@ -1,25 +1,28 @@
 {
-    "name": "in10-component-generator",
-    "version": "0.0.2",
-    "description": "Generates atomic components based on templates",
-    "main": "index.js",
-    "scripts": {
-        "generate": "node component-generator"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/IN10/IN10-component-generator.git"
-    },
-    "keywords": [],
-    "author": "IN10",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/IN10/IN10-component-generator/issues"
-    },
-    "homepage": "https://github.com/IN10/IN10-component-generator#readme",
-    "dependencies": {
-        "fs": "0.0.1-security",
-        "inquirer": "^7.0.0",
-        "replace-in-file": "^3.4.2"
-    }
+  "name": "in10-component-generator",
+  "version": "1.0.0",
+  "description": "Generates atomic components based on templates",
+  "main": "index.js",
+  "scripts": {
+    "generate": "node cli"
+  },
+  "bin": {
+    "component-generator": "./cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IN10/IN10-component-generator.git"
+  },
+  "keywords": [],
+  "author": "IN10",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IN10/IN10-component-generator/issues"
+  },
+  "homepage": "https://github.com/IN10/IN10-component-generator#readme",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "inquirer": "^7.0.0",
+    "replace-in-file": "^3.4.2"
+  }
 }

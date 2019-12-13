@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+require('path');
 const inquirer = require("inquirer");
 const fs = require("fs");
 const replace = require("replace-in-file");
@@ -8,14 +10,14 @@ let TEMPLATES_DIR = "";
 let BASE_DIR = "";
 let QUESTIONS = [];
 
-if (REACT) {
+if (process.argv[2] !== '--blade') {
   BASE_DIR = "components";
-  TEMPLATES_DIR = "./react-templates";
+  TEMPLATES_DIR = `${__dirname}/react-templates`;
   QUESTIONS = [
     {
       name: "component-type",
       type: "list",
-      message: "What component template would you like to generate?",
+      message: "React component type",
       choices: ["organisms", "molecules", "atoms"]
     },
     {
@@ -42,12 +44,12 @@ if (REACT) {
   });
 } else {
   BASE_DIR = "resources";
-  TEMPLATES_DIR = "./blade-templates";
+  TEMPLATES_DIR = `${__dirname}/blade-templates`;
   QUESTIONS = [
     {
       name: "component-type",
       type: "list",
-      message: "What component template would you like to generate?",
+      message: "Blade component type:",
       choices: ["organisms", "molecules", "atoms"]
     },
     {
@@ -112,7 +114,7 @@ function createReactComponentFiles(componentName, componentType) {
         writeFile = `${componentNamePascal}.styles.js`;
       }
 
-      const writePath = `${__dirname}/${writeDir}/${writeFile}`;
+      const writePath = `${writeDir}/${writeFile}`;
 
       if (firstItem) {
         try {
