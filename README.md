@@ -79,5 +79,7 @@ as an addition it will look for app.scss within the sass folder and add the corr
 - For blade splice in the `@import '06_organisms/testCase';` at the correct position alphabetically (it should splice it in under the correct type already) 
 
 
-## To do
+## Other
+Slack me (Jules) for questions or additions.
+Or better yet: create a pull request! Walk by for tips on developing an npm module (use [npm link](https://docs.npmjs.com/cli/link.html)!)
  
