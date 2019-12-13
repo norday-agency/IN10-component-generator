@@ -1,8 +1,6 @@
 # IN10-component-generator
 NPM installable package that generates components for react or blade projects. 
 
-The React generator generates a component within 
-
 ## How to install
 Install the package by adding the following devDependency to your package.json:
 `"in10-react-header-nav": "github:IN10/IN10-component-generator-nav#1.0.0"`
