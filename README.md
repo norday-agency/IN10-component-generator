@@ -66,6 +66,7 @@ The following files will be generated within the base dir:
     - styleguide (already existing dir)
         - Atoms or Molecules Or Organisms (chosen dir)
             - componentName.blade.php
+
 For blade, the wizard asks whether to create a stylesheet file, if chosen, it creates:
 - sass (already existing dir)
     - 04_atoms or 05_molecules Or 06_organisms (chosen dir)
