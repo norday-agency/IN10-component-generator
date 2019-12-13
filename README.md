@@ -78,5 +78,6 @@ as an addition it will look for app.scss within the sass folder and add the corr
 (e.g. `npm run generate MyAtom --type=atom`)
 - For blade splice in the `@import '06_organisms/testCase';` at the correct position alphabetically (it should splice it in under the correct type already) 
 
- 
+
+## To do
  
