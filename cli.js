@@ -50,8 +50,11 @@ if (argv.blade) {
     );
   });
 } else {
+  const typescript = argv.typescript;
   const baseDir = argv.dir || "components";
-  const templatesDir = `${__dirname}/react-templates`;
+  const templatesDir = `${__dirname}/react${
+    typescript ? `-typescript-` : `-`
+  }templates`;
   const questions = [
     {
       name: "component-type",
@@ -83,7 +86,8 @@ if (argv.blade) {
       componentName,
       componentType,
       templatesDir,
-      baseDir
+      baseDir,
+      typescript
     );
   });
 }
@@ -92,11 +96,13 @@ function createReactComponentFiles(
   componentName,
   componentType,
   templatesDir,
-  baseDir
+  baseDir,
+  typescript
 ) {
   const filesToCreate = fs.readdirSync(templatesDir);
   let firstItem = true;
   filesToCreate.forEach(file => {
+    const extension = typescript ? `t` : `j`;
     const origFilePath = `${templatesDir}/${file}`;
 
     // get stats about the current file
@@ -113,12 +119,12 @@ function createReactComponentFiles(
       const fileWithoutExtension = file.substring(0, file.indexOf("."));
 
       const writeDir = `${baseDir}/${componentType}/${componentNamePascal}`;
-      let writeFile = `${componentNamePascal}.jsx`;
+      let writeFile = `${componentNamePascal}.${extension}sx`;
 
       if (fileWithoutExtension === "story") {
-        writeFile = `${componentNamePascal}.stories.js`;
+        writeFile = `${componentNamePascal}.stories.${extension}s`;
       } else if (fileWithoutExtension === "styles") {
-        writeFile = `${componentNamePascal}.styles.js`;
+        writeFile = `${componentNamePascal}.styles.${extension}s`;
       }
 
       const writePath = `${writeDir}/${writeFile}`;
