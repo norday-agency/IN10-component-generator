@@ -122,7 +122,7 @@ function createReactComponentFiles(
       let writeFile = `${componentNamePascal}.${extension}sx`;
 
       if (fileWithoutExtension === "story") {
-        writeFile = `${componentNamePascal}.stories.${extension}s`;
+        writeFile = `${componentNamePascal}.stories.${extension}sx`;
       } else if (fileWithoutExtension === "styles") {
         writeFile = `${componentNamePascal}.styles.${extension}s`;
       }
