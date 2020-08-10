@@ -1,11 +1,10 @@
 import React from 'react';
 import StyledCOMPONENTNAME from './COMPONENTNAME.styles';
 
-type Props = {
-    example: string;
+type COMPONENTNAMEProps = {
 };
 
-const COMPONENTNAME: React.FC<Props> = ({ example }) => (
+const COMPONENTNAME: React.FC<COMPONENTNAMEProps> = ({ }) => (
     <StyledCOMPONENTNAME>
     </StyledCOMPONENTNAME>
 );
