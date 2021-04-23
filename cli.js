@@ -101,75 +101,81 @@ function createReactComponentFiles(
 ) {
   const filesToCreate = fs.readdirSync(templatesDir);
   let firstItem = true;
-  filesToCreate.forEach(file => {
-    const extension = typescript ? `t` : `j`;
-    const origFilePath = `${templatesDir}/${file}`;
 
-    // get stats about the current file
-    const stats = fs.statSync(origFilePath);
-    const componentNamePascal = toPascalCase(componentName);
-    const componentTypePascal = toPascalCase(componentType);
+  if (!fs.existsSync(`${baseDir}/${componentType}/${componentName}`)) {
+    filesToCreate.forEach(file => {
+      const extension = typescript ? `t` : `j`;
+      const origFilePath = `${templatesDir}/${file}`;
 
-    if (!fs.existsSync(`${baseDir}/${componentType}`)) {
-      fs.mkdirSync(`${baseDir}/${componentType}`);
-    }
+      // get stats about the current file
+      const stats = fs.statSync(origFilePath);
+      const componentNamePascal = toPascalCase(componentName);
+      const componentTypePascal = toPascalCase(componentType);
 
-    if (stats.isFile()) {
-      const contents = fs.readFileSync(origFilePath, "utf8");
-      const fileWithoutExtension = file.substring(0, file.indexOf("."));
-
-      const writeDir = `${baseDir}/${componentType}/${componentNamePascal}`;
-      let writeFile = `${componentNamePascal}.${extension}sx`;
-
-      if (fileWithoutExtension === "story") {
-        writeFile = `${componentNamePascal}.stories.${extension}sx`;
-      } else if (fileWithoutExtension === "styles") {
-        writeFile = `${componentNamePascal}.styles.${extension}s`;
+      if (!fs.existsSync(`${baseDir}/${componentType}`)) {
+        fs.mkdirSync(`${baseDir}/${componentType}`);
       }
 
-      const writePath = `${writeDir}/${writeFile}`;
+      if (stats.isFile()) {
+        const contents = fs.readFileSync(origFilePath, "utf8");
+        const fileWithoutExtension = file.substring(0, file.indexOf("."));
 
-      if (firstItem) {
+        const writeDir = `${baseDir}/${componentType}/${componentNamePascal}`;
+        let writeFile = `${componentNamePascal}.${extension}sx`;
+
+        if (fileWithoutExtension === "story") {
+          writeFile = `${componentNamePascal}.stories.${extension}sx`;
+        } else if (fileWithoutExtension === "styles") {
+          writeFile = `${componentNamePascal}.styles.${extension}s`;
+        }
+
+        const writePath = `${writeDir}/${writeFile}`;
+
+        if (firstItem) {
+          try {
+            fs.mkdirSync(writeDir, {recursive: true});
+          } catch (e) {
+            console.log(e);
+          }
+
+          firstItem = false;
+        }
+
         try {
-          fs.mkdirSync(writeDir, { recursive: true });
+          fs.writeFileSync(writePath, contents, "utf8");
         } catch (e) {
           console.log(e);
         }
 
-        firstItem = false;
-      }
+        const replaceOptions = {
+          files: writePath,
+          from: [/COMPONENTNAMEPASCAL/g, /COMPONENTNAME/g],
+          to: [componentNamePascal, componentNamePascal]
+        };
 
-      try {
-        fs.writeFileSync(writePath, contents, "utf8");
-      } catch (e) {
-        console.log(e);
-      }
+        const replaceOptionsForType = {
+          files: writePath,
+          from: [/COMPONENTTYPE/g],
+          to: [componentTypePascal]
+        };
 
-      const replaceOptions = {
-        files: writePath,
-        from: [/COMPONENTNAMEPASCAL/g, /COMPONENTNAME/g],
-        to: [componentNamePascal, componentNamePascal]
-      };
-
-      const replaceOptionsForType = {
-        files: writePath,
-        from: [/COMPONENTTYPE/g],
-        to: [componentTypePascal]
-      };
-
-      replace(replaceOptions)
-        .then(() => {
-          replace(replaceOptionsForType)
-            .then()
+        replace(replaceOptions)
+            .then(() => {
+              replace(replaceOptionsForType)
+                  .then()
+                  .catch(() => {
+                    console.log("Failed at replacing type");
+                  });
+            })
             .catch(() => {
-              console.log("Failed at replacing type");
+              console.log("Failed at replacing name");
             });
-        })
-        .catch(() => {
-          console.log("Failed at replacing name");
-        });
-    }
-  });
+      }
+    });
+  } else {
+    console.error('Component already exists!');
+    return false;
+  }
 }
 
 function createBladeComponentFiles(
