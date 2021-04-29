@@ -1,7 +1,7 @@
 import React from 'react';
 import StyledCOMPONENTNAME from './COMPONENTNAME.styles';
 
-type COMPONENTNAMEProps = {
+export type COMPONENTNAMEProps = {
 };
 
 const COMPONENTNAME: React.FC<COMPONENTNAMEProps> = ({ }) => (
