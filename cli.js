@@ -50,18 +50,29 @@ if (argv.blade) {
     );
   });
 } else {
-  const typescript = argv.typescript;
+  const { typescript, nonAtomic } = argv;
   const baseDir = argv.dir || "components";
   const templatesDir = `${__dirname}/react${
     typescript ? `-typescript-` : `-`
   }templates`;
+
+  let folderQuestion = {
+    name: "component-type",
+    type: "list",
+    message: "React component folder:",
+    choices: ["organisms", "molecules", "atoms"]
+  };
+
+  if (nonAtomic) {
+    const foldersInBaseDir = fs.readdirSync(baseDir);
+
+    if(foldersInBaseDir.length > 0) {
+      folderQuestion.choices = foldersInBaseDir;
+    }
+  }
+
   const questions = [
-    {
-      name: "component-type",
-      type: "list",
-      message: "React component type",
-      choices: ["organisms", "molecules", "atoms"]
-    },
+    folderQuestion,
     {
       name: "component-name",
       type: "input",
@@ -133,7 +144,7 @@ function createReactComponentFiles(
 
         if (firstItem) {
           try {
-            fs.mkdirSync(writeDir, {recursive: true});
+            fs.mkdirSync(writeDir, { recursive: true });
           } catch (e) {
             console.log(e);
           }
@@ -160,20 +171,20 @@ function createReactComponentFiles(
         };
 
         replace(replaceOptions)
-            .then(() => {
-              replace(replaceOptionsForType)
-                  .then()
-                  .catch(() => {
-                    console.log("Failed at replacing type");
-                  });
-            })
-            .catch(() => {
-              console.log("Failed at replacing name");
-            });
+          .then(() => {
+            replace(replaceOptionsForType)
+              .then()
+              .catch(() => {
+                console.log("Failed at replacing type");
+              });
+          })
+          .catch(() => {
+            console.log("Failed at replacing name");
+          });
       }
     });
   } else {
-    console.error('Component already exists!');
+    console.error("Component already exists!");
     return false;
   }
 }
