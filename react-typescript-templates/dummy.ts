@@ -1,0 +1,7 @@
+import COMPONENTNAME, { COMPONENTNAMEProps } from "./COMPONENTNAME";
+
+const COMPONENTNAMEDummy: COMPONENTNAMEProps = {
+
+};
+
+export default COMPONENTNAMEDummy;

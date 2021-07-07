@@ -138,6 +138,10 @@ function createReactComponentFiles(
           writeFile = `${componentNamePascal}.stories.${extension}sx`;
         } else if (fileWithoutExtension === "styles") {
           writeFile = `${componentNamePascal}.styles.${extension}s`;
+        } else if (fileWithoutExtension === "transformation") {
+          writeFile = `${componentNamePascal}.transform.${extension}s`;
+        } else if (fileWithoutExtension === "dummy") {
+          writeFile = `${componentNamePascal}.dummy.${extension}s`;
         }
 
         const writePath = `${writeDir}/${writeFile}`;
