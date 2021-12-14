@@ -4,6 +4,12 @@ const inquirer = require("inquirer");
 const fs = require("fs");
 const replace = require("replace-in-file");
 const argv = require("yargs").argv;
+const {
+  quicktype,
+  InputData,
+  jsonInputForTargetLanguage,
+} = require("quicktype-core");
+
 
 if (argv.blade) {
   const baseDir = argv.dir || "resources";
@@ -82,12 +88,18 @@ if (argv.blade) {
         else
           return "Component name may only include letters, numbers, underscores and dashes.";
       }
-    }
+    },
+    {
+      name: "generate-type",
+      type: "input",
+      message: "Would you like to generate types for the component? If so enter an endpoint containing its data structure:"
+    },
   ];
 
   inquirer.prompt(questions).then(answers => {
     const componentName = answers["component-name"];
     const componentType = answers["component-type"];
+    const endpoint = answers["generate-type"];
 
     if (!fs.existsSync(baseDir)) {
       fs.mkdirSync(baseDir);
@@ -98,7 +110,8 @@ if (argv.blade) {
       componentType,
       templatesDir,
       baseDir,
-      typescript
+      typescript,
+      endpoint
     );
   });
 }
@@ -108,7 +121,8 @@ function createReactComponentFiles(
   componentType,
   templatesDir,
   baseDir,
-  typescript
+  typescript,
+  endpoint
 ) {
   const filesToCreate = fs.readdirSync(templatesDir);
   let firstItem = true;
@@ -185,6 +199,9 @@ function createReactComponentFiles(
           .catch(() => {
             console.log("Failed at replacing name");
           });
+
+        endpoint && fetchAndType(componentNamePascal, endpoint)
+            .then(contents => fs.writeFileSync(`${writeDir}/${componentNamePascal}.d.ts`, contents.join('\n'), "utf8"));
       }
     });
   } else {
@@ -337,4 +354,35 @@ function toPascalCase(string) {
     return m[1].toUpperCase();
   });
   return camelCase.charAt(0).toUpperCase() + camelCase.slice(1);
+}
+
+async function fetchAndType(name, endpoint){
+  try {
+    const data = await fetch(endpoint);
+    const json = await data.json();
+    const {lines: contents} = await quicktypeJSON('typescript', name, JSON.stringify(json))
+    return contents
+  } catch (e){
+    console.log("Error generating types", e)
+  }
+}
+
+async function quicktypeJSON(targetLanguage, typeName, jsonString) {
+  const jsonInput = jsonInputForTargetLanguage(targetLanguage);
+
+  // We could add multiple samples for the same desired
+  // type, or many sources for other types. Here we're
+  // just making one type from one piece of sample JSON.
+  await jsonInput.addSource({
+    name: typeName,
+    samples: [jsonString],
+  });
+
+  const inputData = new InputData();
+  inputData.addInput(jsonInput);
+
+  return await quicktype({
+    inputData,
+    lang: targetLanguage,
+  });
 }

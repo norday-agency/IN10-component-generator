@@ -24,6 +24,7 @@
   "dependencies": {
     "fs": "0.0.1-security",
     "inquirer": "^7.0.0",
+    "quicktype-core": "^6.0.70",
     "replace-in-file": "^3.4.2",
     "yargs": "^15.0.2"
   }
