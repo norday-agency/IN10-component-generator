@@ -1,5 +1,8 @@
 import styled from 'styled-components';
 
-const StyledCOMPONENTNAME = styled.div``;
+export type StyledCOMPONENTNAMEProps = {
+}
+
+const StyledCOMPONENTNAME = styled.div<StyledCOMPONENTNAMEProps>``;
 
 export default StyledCOMPONENTNAME;

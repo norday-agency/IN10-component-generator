@@ -87,13 +87,6 @@ as an addition it will look for app.scss within the sass folder and add the corr
 
 `@import '06_organisms/componentName';`
 
-## To do
-
--   Add more options for React generator, e.g. whether to add a styled component and story
--   Possibility to set atomic-type and name with flags, then skip the wizard
-    (e.g. `npm run generate MyAtom --type=atom`)
--   For blade splice in the `@import '06_organisms/componentName';` at the correct position alphabetically (it should splice it in under the correct type already)
-
 ## Other
 
 Slack me (Jules) for questions or additions.

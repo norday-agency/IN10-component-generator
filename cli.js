@@ -50,20 +50,22 @@ if (argv.blade) {
     );
   });
 } else {
-  const { typescript, nonAtomic } = argv;
+  const { nonTypescript, atomic } = argv;
   const baseDir = argv.dir || "components";
   const templatesDir = `${__dirname}/react${
-    typescript ? `-typescript-` : `-`
+      nonTypescript ? `-` : `-typescript-`
   }templates`;
 
   let folderQuestion = {
     name: "component-type",
     type: "list",
     message: "React component folder:",
-    choices: ["organisms", "molecules", "atoms"]
+    choices: []
   };
 
-  if (nonAtomic) {
+  if (atomic) {
+    folderQuestion.choices = ["organisms", "molecules", "atoms"];
+  } else {
     const foldersInBaseDir = fs.readdirSync(baseDir);
 
     if(foldersInBaseDir.length > 0) {
@@ -98,7 +100,7 @@ if (argv.blade) {
       componentType,
       templatesDir,
       baseDir,
-      typescript
+      nonTypescript
     );
   });
 }
@@ -108,14 +110,14 @@ function createReactComponentFiles(
   componentType,
   templatesDir,
   baseDir,
-  typescript
+  nonTypescript
 ) {
   const filesToCreate = fs.readdirSync(templatesDir);
   let firstItem = true;
 
   if (!fs.existsSync(`${baseDir}/${componentType}/${componentName}`)) {
     filesToCreate.forEach(file => {
-      const extension = typescript ? `t` : `j`;
+      const extension = nonTypescript ? `j`:`t`;
       const origFilePath = `${templatesDir}/${file}`;
 
       // get stats about the current file
