@@ -5,7 +5,8 @@
   "description": "Generates atomic components based on templates",
   "main": "cli.js",
   "scripts": {
-    "generate": "node cli --typescript --nonAtomic"
+    "generate": "node cli --typescript --nonAtomic",
+    "model": "node modelCli --apiBase=https://api.rotterdampas.nl/admin/v1.0/"
   },
   "bin": {
     "component-generator": "./cli.js"
@@ -22,6 +23,7 @@
   },
   "homepage": "https://github.com/IN10/IN10-component-generator#readme",
   "dependencies": {
+    "date-fns": "^2.28.0",
     "fs": "0.0.1-security",
     "inquirer": "^7.0.0",
     "quicktype-core": "^6.0.70",
