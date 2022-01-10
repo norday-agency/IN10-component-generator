@@ -1,30 +1,30 @@
 {
-  "name": "in10-component-generator",
-  "version": "1.1.5",
-  "private": true,
-  "description": "Generates atomic components based on templates",
-  "main": "cli.js",
-  "scripts": {
-    "generate": "node cli"
-  },
-  "bin": {
-    "component-generator": "./cli.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/IN10/IN10-component-generator.git"
-  },
-  "keywords": [],
-  "author": "Jules Verdijk",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/IN10/IN10-component-generator/issues"
-  },
-  "homepage": "https://github.com/IN10/IN10-component-generator#readme",
-  "dependencies": {
-    "fs": "0.0.1-security",
-    "inquirer": "^7.0.0",
-    "replace-in-file": "^3.4.2",
-    "yargs": "^15.0.2"
-  }
+    "name": "in10-component-generator",
+    "version": "2.0.0",
+    "private": true,
+    "description": "Generates atomic components based on templates",
+    "main": "cli.js",
+    "scripts": {
+        "generate": "node cli"
+    },
+    "bin": {
+        "component-generator": "./cli.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/IN10/IN10-component-generator.git"
+    },
+    "keywords": [],
+    "author": "Jules Verdijk",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/IN10/IN10-component-generator/issues"
+    },
+    "homepage": "https://github.com/IN10/IN10-component-generator#readme",
+    "dependencies": {
+        "fs": "0.0.1-security",
+        "inquirer": "^7.0.0",
+        "replace-in-file": "^3.4.2",
+        "yargs": "^15.0.2"
+    }
 }
