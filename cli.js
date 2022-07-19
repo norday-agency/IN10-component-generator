@@ -84,12 +84,33 @@ if (argv.blade) {
         else
           return "Component name may only include letters, numbers, underscores and dashes.";
       }
-    }
+    },
+    {
+      name: 'with-story',
+      type: 'confirm',
+      message: 'Include storybook and dummy files?',
+      default: true,
+    },
+    {
+      name: 'with-transformation',
+      type: 'confirm',
+      message: 'Include transformation file?',
+      default: false,
+    },
+    {
+      name: 'with-styled',
+      type: 'confirm',
+      message: 'Include styled component?',
+      default: false,
+    },
   ];
 
   inquirer.prompt(questions).then(answers => {
     const componentName = answers["component-name"];
     const componentType = answers["component-type"];
+    const withStory = answers["with-story"];
+    const withTransformation = answers["with-transformation"];
+    const withStyled = answers["with-styled"];
 
     if (!fs.existsSync(baseDir)) {
       fs.mkdirSync(baseDir);
@@ -98,6 +119,8 @@ if (argv.blade) {
     createReactComponentFiles(
       componentName,
       componentType,
+      withStory,
+      withTransformation,
       templatesDir,
       baseDir,
       nonTypescript
@@ -108,6 +131,9 @@ if (argv.blade) {
 function createReactComponentFiles(
   componentName,
   componentType,
+  withStory,
+  withTransformation,
+  withStyled,
   templatesDir,
   baseDir,
   nonTypescript
@@ -137,12 +163,16 @@ function createReactComponentFiles(
         let writeFile = `${componentNamePascal}.${extension}sx`;
 
         if (fileWithoutExtension === "story") {
+          if(!withStory) return;
           writeFile = `${componentNamePascal}.stories.${extension}sx`;
         } else if (fileWithoutExtension === "styles") {
+          if(!withStyled) return;
           writeFile = `${componentNamePascal}.styles.${extension}s`;
         } else if (fileWithoutExtension === "transformation") {
+          if(!withTransformation) return;
           writeFile = `${componentNamePascal}.transform.${extension}s`;
         } else if (fileWithoutExtension === "dummy") {
+          if(!withStory) return;
           writeFile = `${componentNamePascal}.dummy.${extension}s`;
         }
 
