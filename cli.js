@@ -96,13 +96,7 @@ if (argv.blade) {
       type: 'confirm',
       message: 'Include transformation file?',
       default: false,
-    },
-    {
-      name: 'with-styled',
-      type: 'confirm',
-      message: 'Include styled component?',
-      default: false,
-    },
+    }
   ];
 
   inquirer.prompt(questions).then(answers => {
@@ -110,7 +104,6 @@ if (argv.blade) {
     const componentType = answers["component-type"];
     const withStory = answers["with-story"];
     const withTransformation = answers["with-transformation"];
-    const withStyled = answers["with-styled"];
 
     if (!fs.existsSync(baseDir)) {
       fs.mkdirSync(baseDir);
@@ -133,7 +126,6 @@ function createReactComponentFiles(
   componentType,
   withStory,
   withTransformation,
-  withStyled,
   templatesDir,
   baseDir,
   nonTypescript
@@ -166,7 +158,6 @@ function createReactComponentFiles(
           if(!withStory) return;
           writeFile = `${componentNamePascal}.stories.${extension}sx`;
         } else if (fileWithoutExtension === "styles") {
-          if(!withStyled) return;
           writeFile = `${componentNamePascal}.styles.${extension}s`;
         } else if (fileWithoutExtension === "transformation") {
           if(!withTransformation) return;
