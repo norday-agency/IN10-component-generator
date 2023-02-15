@@ -111,6 +111,7 @@ function createReactComponentFiles(componentName, componentType, withStory, with
       const stats = fs.statSync(origFilePath);
       const componentNamePascal = toPascalCase(componentName);
       const componentTypePascal = toPascalCase(componentType);
+      const componentNameSnake = toSnakeCase(componentName);
 
       if (!fs.existsSync(`${baseDir}/${componentType}`)) {
         fs.mkdirSync(`${baseDir}/${componentType}`);
@@ -126,7 +127,7 @@ function createReactComponentFiles(componentName, componentType, withStory, with
         let writeFile;
 
         if (fileWithoutExtension === "component") {
-          // if we want to create a block-component, skip the default component template and use component-block
+          // If we're creating a block-component, skip the default component template and use component-block
           if (componentType === "blocks") return;
           writeFile = `${componentNamePascal}.${extension}sx`;
         } else if (fileWithoutExtension === "component-block") {
@@ -153,8 +154,6 @@ function createReactComponentFiles(componentName, componentType, withStory, with
           } catch (e) {
             console.log(e);
           }
-
-          firstItem = false;
         }
 
         try {
@@ -175,17 +174,60 @@ function createReactComponentFiles(componentName, componentType, withStory, with
           to: [componentTypePascal],
         };
 
-        replace(replaceOptions)
+        const replaceOptionsForNameSnake = {
+          files: writePath,
+          from: [/COMPONENTNAMESNAKE/g],
+          to: [componentNameSnake],
+        };
+
+        replace(replaceOptionsForNameSnake)
           .then(() => {
             replace(replaceOptionsForType)
-              .then()
+              .then(() => {
+                replace(replaceOptions)
+                  .then()
+                  .catch(() => {
+                    console.log("Failed at replace name");
+                  });
+              })
               .catch(() => {
                 console.log("Failed at replacing type");
               });
           })
           .catch(() => {
-            console.log("Failed at replacing name");
+            console.log("Failed at replacing name snakecase");
           });
+      }
+
+      // If we're creating a block-component, add the new blocktype to blocktypes + blocksconfigurations
+      if (componentType === "blocks") {
+        if (firstItem) {
+          const blocksDir = `${baseDir}/${componentType}`;
+          const blockTypeFilePath = blocksDir + "/Types/BlockType.ts";
+
+          const replaceOptionsBlockTypeFile = {
+            files: blockTypeFilePath,
+            from: ["import", "export enum BlockTypesNames {", "type BlockType ="],
+            to: [
+              `import { ${componentNamePascal}Type } from '../components/${componentNamePascal}/${componentNamePascal}'\nimport`,
+              `export enum BlockTypesNames { ${componentNameSnake} = "${componentNameSnake}",`,
+              `type BlockType = | ${componentNamePascal}Type`,
+            ],
+          };
+
+          replace(replaceOptionsBlockTypeFile)
+            .then()
+            .catch(() => {
+              console.log("Failed at replacing type");
+            });
+
+          // Find blocksConfigurations.ts
+          // Top of file, add: `import ${componentNamePascal} from '../components/${componentNamePascal}/${componentNamePascal}';`
+          // Find const blockConfigurations
+          // add: [BlockTypesNames.componentNameSnakeCase]: { transformation: (v) => v, component: componentNamePascal },
+        }
+
+        firstItem = false;
       }
     });
   } else {
@@ -333,3 +375,10 @@ function toPascalCase(string) {
   });
   return camelCase.charAt(0).toUpperCase() + camelCase.slice(1);
 }
+
+const toSnakeCase = (str) =>
+  str &&
+  str
+    .match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
+    .map((x) => x.toLowerCase())
+    .join("_");

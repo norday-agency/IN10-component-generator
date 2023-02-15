@@ -4,7 +4,7 @@ import { BlockBase, BlockTypesNames } from "../../Types/BlockType";
 
 export type COMPONENTNAMEProps = {};
 
-export type COMPONENTNAMEType = BlockBase<BlockTypesNames.paragraph, COMPONENTNAMEProps>;
+export type COMPONENTNAMEType = BlockBase<BlockTypesNames.COMPONENTNAMESNAKE, COMPONENTNAMEProps>;
 
 const COMPONENTNAME: React.FC<COMPONENTNAMEProps> = ({}) => <StyledCOMPONENTNAME></StyledCOMPONENTNAME>;
 
