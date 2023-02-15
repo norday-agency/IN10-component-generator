@@ -203,6 +203,8 @@ function createReactComponentFiles(componentName, componentType, withStory, with
       if (componentType === "blocks") {
         if (firstItem) {
           const blocksDir = `${baseDir}/${componentType}`;
+
+          // Add types to BlockType.ts
           const blockTypeFilePath = blocksDir + "/Types/BlockType.ts";
 
           const replaceOptionsBlockTypeFile = {
@@ -221,10 +223,26 @@ function createReactComponentFiles(componentName, componentType, withStory, with
               console.log("Failed at replacing type");
             });
 
-          // Find blocksConfigurations.ts
-          // Top of file, add: `import ${componentNamePascal} from '../components/${componentNamePascal}/${componentNamePascal}';`
-          // Find const blockConfigurations
-          // add: [BlockTypesNames.componentNameSnakeCase]: { transformation: (v) => v, component: componentNamePascal },
+          // Add block to blocksConfigurations.ts
+          const blocksConfigFilePath = blocksDir + "/middleware/blocksConfigurations.ts";
+
+          const replaceOptionsBlocksConfigFile = {
+            files: blocksConfigFilePath,
+            from: [
+              "import",
+              "const blocksConfigurations: Record<string, { transformation: (e: any) => any; component: React.ElementType }> = {",
+            ],
+            to: [
+              `import ${componentNamePascal} from '../components/${componentNamePascal}/${componentNamePascal}'\nimport`,
+              `const blocksConfigurations: Record<string, { transformation: (e: any) => any; component: React.ElementType }> = { \n [BlockTypesNames.${componentNameSnake}]: { transformation: (v) => v, component: ${componentNamePascal} },`,
+            ],
+          };
+
+          replace(replaceOptionsBlocksConfigFile)
+            .then()
+            .catch(() => {
+              console.log("Failed at replacing type");
+            });
         }
 
         firstItem = false;
