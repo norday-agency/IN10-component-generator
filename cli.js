@@ -225,6 +225,10 @@ function createReactComponentFiles(componentName, componentType, withStory, with
 
           // Add block to blocksConfigurations.ts
           const blocksConfigFilePath = blocksDir + "/middleware/blocksConfigurations.ts";
+          const transformFunc = withTransformation ? `${componentNamePascal}Transform` : "(v) => v";
+          const importTransformString = withTransformation
+            ? `import ${transformFunc} from '../components/${componentNamePascal}/${componentNamePascal}.transform'; \n`
+            : "";
 
           const replaceOptionsBlocksConfigFile = {
             files: blocksConfigFilePath,
@@ -233,8 +237,8 @@ function createReactComponentFiles(componentName, componentType, withStory, with
               "const blocksConfigurations: Record<string, { transformation: (e: any) => any; component: React.ElementType }> = {",
             ],
             to: [
-              `import ${componentNamePascal} from '../components/${componentNamePascal}/${componentNamePascal}'\nimport`,
-              `const blocksConfigurations: Record<string, { transformation: (e: any) => any; component: React.ElementType }> = { \n [BlockTypesNames.${componentNameSnake}]: { transformation: (v) => v, component: ${componentNamePascal} },`,
+              `${importTransformString} import ${componentNamePascal} from '../components/${componentNamePascal}/${componentNamePascal}'; \nimport`,
+              `const blocksConfigurations: Record<string, { transformation: (e: any) => any; component: React.ElementType }> = { \n [BlockTypesNames.${componentNameSnake}]: { transformation: ${transformFunc}, component: ${componentNamePascal} },`,
             ],
           };
 
