@@ -13,26 +13,25 @@ if (argv.blade) {
       name: "component-type",
       type: "list",
       message: "Blade component type:",
-      choices: ["organisms", "molecules", "atoms"]
+      choices: ["organisms", "molecules", "atoms"],
     },
     {
       name: "component-name",
       type: "input",
       message: "Component name:",
-      validate: function(input) {
+      validate: function (input) {
         if (/^([A-Za-z\-\_\d])+$/.test(input)) return true;
-        else
-          return "Component name may only include letters, numbers, underscores and dashes.";
-      }
+        else return "Component name may only include letters, numbers, underscores and dashes.";
+      },
     },
     {
       name: "component-scss",
       type: "confirm",
-      message: "Include .scss file?"
-    }
+      message: "Include .scss file?",
+    },
   ];
 
-  inquirer.prompt(questions).then(answers => {
+  inquirer.prompt(questions).then((answers) => {
     const componentName = answers["component-name"];
     const componentType = answers["component-type"];
 
@@ -41,13 +40,7 @@ if (argv.blade) {
     }
     const componentStylesheet = answers["component-scss"];
 
-    createBladeComponentFiles(
-      componentName,
-      componentType,
-      componentStylesheet,
-      templatesDir,
-      baseDir
-    );
+    createBladeComponentFiles(componentName, componentType, componentStylesheet, templatesDir, baseDir);
   });
 } else {
   const baseDir = argv.dir || "components";
@@ -57,12 +50,12 @@ if (argv.blade) {
     name: "component-type",
     type: "list",
     message: "React component folder:",
-    choices: []
+    choices: [],
   };
 
   const foldersInBaseDir = fs.readdirSync(baseDir);
 
-  if(foldersInBaseDir.length > 0) {
+  if (foldersInBaseDir.length > 0) {
     folderQuestion.choices = foldersInBaseDir;
   }
 
@@ -72,27 +65,26 @@ if (argv.blade) {
       name: "component-name",
       type: "input",
       message: "Component name:",
-      validate: function(input) {
+      validate: function (input) {
         if (/^([A-Za-z\-\_\d])+$/.test(input)) return true;
-        else
-          return "Component name may only include letters, numbers, underscores and dashes.";
-      }
+        else return "Component name may only include letters, numbers, underscores and dashes.";
+      },
     },
     {
-      name: 'with-story',
-      type: 'confirm',
-      message: 'Include storybook and dummy files?',
+      name: "with-story",
+      type: "confirm",
+      message: "Include storybook and dummy files?",
       default: true,
     },
     {
-      name: 'with-transformation',
-      type: 'confirm',
-      message: 'Include transformation file?',
+      name: "with-transformation",
+      type: "confirm",
+      message: "Include transformation file?",
       default: false,
-    }
+    },
   ];
 
-  inquirer.prompt(questions).then(answers => {
+  inquirer.prompt(questions).then((answers) => {
     const componentName = answers["component-name"];
     const componentType = answers["component-type"];
     const withStory = answers["with-story"];
@@ -102,30 +94,16 @@ if (argv.blade) {
       fs.mkdirSync(baseDir);
     }
 
-    createReactComponentFiles(
-      componentName,
-      componentType,
-      withStory,
-      withTransformation,
-      templatesDir,
-      baseDir
-    );
+    createReactComponentFiles(componentName, componentType, withStory, withTransformation, templatesDir, baseDir);
   });
 }
 
-function createReactComponentFiles(
-  componentName,
-  componentType,
-  withStory,
-  withTransformation,
-  templatesDir,
-  baseDir
-) {
+function createReactComponentFiles(componentName, componentType, withStory, withTransformation, templatesDir, baseDir) {
   const filesToCreate = fs.readdirSync(templatesDir);
   let firstItem = true;
 
   if (!fs.existsSync(`${baseDir}/${componentType}/${componentName}`)) {
-    filesToCreate.forEach(file => {
+    filesToCreate.forEach((file) => {
       const extension = `t`;
       const origFilePath = `${templatesDir}/${file}`;
 
@@ -133,6 +111,7 @@ function createReactComponentFiles(
       const stats = fs.statSync(origFilePath);
       const componentNamePascal = toPascalCase(componentName);
       const componentTypePascal = toPascalCase(componentType);
+      const componentNameSnake = toSnakeCase(componentName);
 
       if (!fs.existsSync(`${baseDir}/${componentType}`)) {
         fs.mkdirSync(`${baseDir}/${componentType}`);
@@ -142,19 +121,28 @@ function createReactComponentFiles(
         const contents = fs.readFileSync(origFilePath, "utf8");
         const fileWithoutExtension = file.substring(0, file.indexOf("."));
 
-        const writeDir = `${baseDir}/${componentType}/${componentNamePascal}`;
-        let writeFile = `${componentNamePascal}.${extension}sx`;
+        const writeDir = `${baseDir}/${componentType}/${
+          componentType === "blocks" ? "components/" : ""
+        }${componentNamePascal}`;
+        let writeFile;
 
-        if (fileWithoutExtension === "story") {
-          if(!withStory) return;
+        if (fileWithoutExtension === "component") {
+          // If we're creating a block-component, skip the default component template and use component-block
+          if (componentType === "blocks") return;
+          writeFile = `${componentNamePascal}.${extension}sx`;
+        } else if (fileWithoutExtension === "component-block") {
+          if (componentType !== "blocks") return;
+          writeFile = `${componentNamePascal}.${extension}sx`;
+        } else if (fileWithoutExtension === "story") {
+          if (!withStory) return;
           writeFile = `${componentNamePascal}.stories.${extension}sx`;
         } else if (fileWithoutExtension === "styles") {
           writeFile = `${componentNamePascal}.styles.${extension}s`;
         } else if (fileWithoutExtension === "transformation") {
-          if(!withTransformation) return;
+          if (!withTransformation) return;
           writeFile = `${componentNamePascal}.transform.${extension}s`;
         } else if (fileWithoutExtension === "dummy") {
-          if(!withStory) return;
+          if (!withStory) return;
           writeFile = `${componentNamePascal}.dummy.${extension}s`;
         }
 
@@ -166,8 +154,6 @@ function createReactComponentFiles(
           } catch (e) {
             console.log(e);
           }
-
-          firstItem = false;
         }
 
         try {
@@ -179,26 +165,91 @@ function createReactComponentFiles(
         const replaceOptions = {
           files: writePath,
           from: [/COMPONENTNAMEPASCAL/g, /COMPONENTNAME/g],
-          to: [componentNamePascal, componentNamePascal]
+          to: [componentNamePascal, componentNamePascal],
         };
 
         const replaceOptionsForType = {
           files: writePath,
           from: [/COMPONENTTYPE/g],
-          to: [componentTypePascal]
+          to: [componentTypePascal],
         };
 
-        replace(replaceOptions)
+        const replaceOptionsForNameSnake = {
+          files: writePath,
+          from: [/COMPONENTNAMESNAKE/g],
+          to: [componentNameSnake],
+        };
+
+        replace(replaceOptionsForNameSnake)
           .then(() => {
             replace(replaceOptionsForType)
-              .then()
+              .then(() => {
+                replace(replaceOptions)
+                  .then()
+                  .catch(() => {
+                    console.log("Failed at replace name");
+                  });
+              })
               .catch(() => {
                 console.log("Failed at replacing type");
               });
           })
           .catch(() => {
-            console.log("Failed at replacing name");
+            console.log("Failed at replacing name snakecase");
           });
+      }
+
+      // If we're creating a block-component, add the new blocktype to blocktypes + blocksconfigurations
+      if (componentType === "blocks") {
+        if (firstItem) {
+          const blocksDir = `${baseDir}/${componentType}`;
+
+          // Add types to BlockType.ts
+          const blockTypeFilePath = blocksDir + "/Types/BlockType.ts";
+
+          const replaceOptionsBlockTypeFile = {
+            files: blockTypeFilePath,
+            from: ["import", "export enum BlockTypesNames {", "type BlockType ="],
+            to: [
+              `import { ${componentNamePascal}Type } from '../components/${componentNamePascal}/${componentNamePascal}'\nimport`,
+              `export enum BlockTypesNames { ${componentNameSnake} = "${componentNameSnake}",`,
+              `type BlockType = | ${componentNamePascal}Type`,
+            ],
+          };
+
+          replace(replaceOptionsBlockTypeFile)
+            .then()
+            .catch(() => {
+              console.log("Failed at replacing type");
+            });
+
+          // Add block to blocksConfigurations.ts
+          const blocksConfigFilePath = blocksDir + "/middleware/blocksConfigurations.ts";
+          const transformFunc = withTransformation ? `${componentNamePascal}Transform` : "(v) => v";
+          const importTransformString = withTransformation
+            ? `import ${transformFunc} from '../components/${componentNamePascal}/${componentNamePascal}.transform'; \n`
+            : "";
+
+          const replaceOptionsBlocksConfigFile = {
+            files: blocksConfigFilePath,
+            from: [
+              "import",
+              "const blocksConfigurations: Record<string, { transformation: (e: any) => any; component: React.ElementType }> = {",
+            ],
+            to: [
+              `${importTransformString} import ${componentNamePascal} from '../components/${componentNamePascal}/${componentNamePascal}'; \nimport`,
+              `const blocksConfigurations: Record<string, { transformation: (e: any) => any; component: React.ElementType }> = { \n [BlockTypesNames.${componentNameSnake}]: { transformation: ${transformFunc}, component: ${componentNamePascal} },`,
+            ],
+          };
+
+          replace(replaceOptionsBlocksConfigFile)
+            .then()
+            .catch(() => {
+              console.log("Failed at replacing type");
+            });
+        }
+
+        firstItem = false;
       }
     });
   } else {
@@ -207,19 +258,13 @@ function createReactComponentFiles(
   }
 }
 
-function createBladeComponentFiles(
-  componentName,
-  componentType,
-  componentStylesheet,
-  templatesDir,
-  baseDir
-) {
+function createBladeComponentFiles(componentName, componentType, componentStylesheet, templatesDir, baseDir) {
   const filesToCreate = fs.readdirSync(templatesDir);
 
   let cssMap = null;
   let cssSpliceString = null;
 
-  filesToCreate.forEach(file => {
+  filesToCreate.forEach((file) => {
     const origFilePath = `${templatesDir}/${file}`;
 
     // get stats about the current file
@@ -300,7 +345,7 @@ function createBladeComponentFiles(
         const replaceOptions = {
           files: writePath,
           from: [/COMPONENTTYPE/g, /COMPONENTNAMEPASCAL/g, /COMPONENTNAME/g],
-          to: [componentType, toPascalCase(componentName), componentName]
+          to: [componentType, toPascalCase(componentName), componentName],
         };
 
         replaceComponentName(replaceOptions);
@@ -308,7 +353,7 @@ function createBladeComponentFiles(
         const replaceOptions = {
           files: writePath,
           from: [/COMPONENTNAMEPASCAL/g, /COMPONENTNAME/g],
-          to: [toPascalCase(componentName), componentName]
+          to: [toPascalCase(componentName), componentName],
         };
 
         replaceComponentName(replaceOptions);
@@ -341,14 +386,21 @@ function createBladeComponentFiles(
 function replaceComponentName(replaceOptions) {
   replace(replaceOptions)
     .then()
-    .catch(error => {
+    .catch((error) => {
       console.error("Error occurred:", error);
     });
 }
 
 function toPascalCase(string) {
-  const camelCase = string.replace(/(\-\w)/g, function(m) {
+  const camelCase = string.replace(/(\-\w)/g, function (m) {
     return m[1].toUpperCase();
   });
   return camelCase.charAt(0).toUpperCase() + camelCase.slice(1);
 }
+
+const toSnakeCase = (str) =>
+  str &&
+  str
+    .match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
+    .map((x) => x.toLowerCase())
+    .join("_");
