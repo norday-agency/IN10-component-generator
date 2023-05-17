@@ -6,7 +6,7 @@ NPM installable package that generates components for react or blade projects.
 
 Install the package by adding the following devDependency to your package.json:
 
-`"in10-component-generator": "github:IN10/IN10-component-generator#v1.1.2"`
+`"in10-component-generator": "github:IN10/IN10-component-generator#v3.0.1"`
 
 Notice the version (semver) after the #, use this to bump the version or install an older version of this package.
 
@@ -17,39 +17,23 @@ To use the generator, add the following script to your package.json (so within
   
  `"generate": "component-generator"`
 
-The script accepts two arguments:
+The script accepts one argument:
 
-`--blade` OR `--typescript`
+`--dir={YOUR_DIR}` (default: `components`)
 
-Use if you're working on a laravel/blade or typescript project, defaults to `false`
+This arg should point to the folder containing the subfolders that contain your components. 
+For most next-js projects this defaults to `components` directory in root of your project.
 
-`--dir={YOUR_DIR}`
+Note that this arg should be added within the script in your package.json, e.g.
 
-This should be the base dir to place the components.
-
-For a react (and typescript) project (no --blade flag set) this would be the
-folder containing the organisms, molecules and atoms directories. For
-React this defaults to `components` directory in root of your project.
-
-For blade project (--blade flag) this should be set to the folder
-containing the sass and views directories. For blade this defaults
-to `resources`.
-
-Note that these flags should be added within the script in your package.json,
-e.g.
-
-`"generate": "component-generator --blade --dir=theme/resources"`
+`"generate": "component-generator --dir=src/comps"`
 
 Then run this with
 `npm run generate`
 
 ## Dependencies
 
-Please note that this generator is specifically to be used within the IN10 setups, so
-the blade generator expects that the project uses blade (what a surprise!), the IN10 styleguide and a
-frontend setup that can handle sass.
-
-The react generator expects a project that uses storybook and styled components.
+Please note that this generator is specifically to be used within the IN10-frontend-blueprint setup.
 
 ## What it does
 
@@ -61,33 +45,8 @@ and name (no spaces or special chars expect '-' and '\_').
 The following files will be generated in your chosen type folder:
 
 -   ComponentName (dir)
-    -   ComponentName.jsx (React file with PropTypes and Styled Component wrapped)
-    -   ComponentName.styled.js (Styled Component file)
-    -   ComponentName.stories.js (Storybook file)
-
-### For Blade
-
-The following files will be generated within the base dir:
-
--   views (already existing dir)
-    -   components (already exisiting dir)
-        -   Atoms or Molecules Or Organisms (chosen dir)
-            -   componentName.blade.php
-    -   styleguide (already existing dir)
-        -   Atoms or Molecules Or Organisms (chosen dir)
-            -   componentName.blade.php
-
-For blade, the wizard asks whether to create a stylesheet file, if chosen, it creates:
-
--   sass (already existing dir)
-    -   04_atoms or 05_molecules Or 06_organisms (chosen dir)
-        -   \_componentName.scss
-
-as an addition it will look for app.scss within the sass folder and add the correct import line to it:
-
-`@import '06_organisms/componentName';`
-
-## Other
-
-Slack me (Jules) for questions or additions.
-Or better yet: create a pull request! Walk by for tips on developing an npm module (use [npm link](https://docs.npmjs.com/cli/link.html)!)
+    -   ComponentName.tsx (React component with empty typing and Styled Component wrapped)
+    -   ComponentName.styled.ts (Styled Component div with empty typing)
+    -   ComponentName.stories.ts (Optional - Storybook file with dummy args set, typed)
+    -   ComponentName.dummy.ts (Optional - Dummy file used to fill args for storybook, typed)
+    -   ComponentName.transform.ts (Optional - Transform file used to transform props from API, typed)

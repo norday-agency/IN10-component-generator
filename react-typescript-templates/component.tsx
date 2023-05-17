@@ -4,9 +4,11 @@ import StyledCOMPONENTNAME from './COMPONENTNAME.styles';
 export type COMPONENTNAMEProps = {
 };
 
-const COMPONENTNAME: React.FC<COMPONENTNAMEProps> = ({ }) => (
-    <StyledCOMPONENTNAME>
-    </StyledCOMPONENTNAME>
-);
+const COMPONENTNAME: React.FC<COMPONENTNAMEProps> = ({ }) => {
+    return (
+        <StyledCOMPONENTNAME>
+        </StyledCOMPONENTNAME>
+    );
+}
 
 export default COMPONENTNAME;

@@ -6,6 +6,11 @@ export type COMPONENTNAMEProps = {};
 
 export type COMPONENTNAMEType = BlockBase<BlockTypesNames.COMPONENTNAMESNAKE, COMPONENTNAMEProps>;
 
-const COMPONENTNAME: React.FC<COMPONENTNAMEProps> = ({}) => <StyledCOMPONENTNAME></StyledCOMPONENTNAME>;
+const COMPONENTNAME: React.FC<COMPONENTNAMEProps> = ({}) => {
+    return (
+        <StyledCOMPONENTNAME>
+        </StyledCOMPONENTNAME>
+    );
+}
 
 export default COMPONENTNAME;

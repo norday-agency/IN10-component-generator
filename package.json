@@ -1,8 +1,8 @@
 {
   "name": "in10-component-generator",
-  "version": "2.0.5",
+  "version": "3.0.1",
   "private": true,
-  "description": "Generates atomic components based on templates",
+  "description": "Generates React Typescript components based on templates",
   "main": "cli.js",
   "scripts": {
     "generate": "node cli"

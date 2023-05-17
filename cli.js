@@ -5,98 +5,60 @@ const fs = require("fs");
 const replace = require("replace-in-file");
 const argv = require("yargs").argv;
 
-if (argv.blade) {
-  const baseDir = argv.dir || "resources";
-  const templatesDir = `${__dirname}/blade-templates`;
-  const questions = [
-    {
-      name: "component-type",
-      type: "list",
-      message: "Blade component type:",
-      choices: ["organisms", "molecules", "atoms"],
+const baseDir = argv.dir || "components";
+const templatesDir = `${__dirname}/react-typescript-templates`;
+
+let folderQuestion = {
+  name: "component-type",
+  type: "list",
+  message: "React component folder:",
+  choices: [],
+};
+
+const foldersInBaseDir = fs.readdirSync(baseDir);
+
+if (foldersInBaseDir.length > 0) {
+  folderQuestion.choices = foldersInBaseDir;
+}
+
+const questions = [
+  folderQuestion,
+  {
+    name: "component-name",
+    type: "input",
+    message: "Component name:",
+    validate: function (input) {
+      if (/^([A-Za-z\-\_\d])+$/.test(input)) return true;
+      else return "Component name may only include letters, numbers, underscores and dashes.";
     },
-    {
-      name: "component-name",
-      type: "input",
-      message: "Component name:",
-      validate: function (input) {
-        if (/^([A-Za-z\-\_\d])+$/.test(input)) return true;
-        else return "Component name may only include letters, numbers, underscores and dashes.";
-      },
-    },
-    {
-      name: "component-scss",
-      type: "confirm",
-      message: "Include .scss file?",
-    },
-  ];
+  },
+  {
+    name: "with-story",
+    type: "confirm",
+    message: "Include storybook and dummy files?",
+    default: true,
+  },
+  {
+    name: "with-transformation",
+    type: "confirm",
+    message: "Include transformation file?",
+    default: false,
+  },
+];
 
-  inquirer.prompt(questions).then((answers) => {
-    const componentName = answers["component-name"];
-    const componentType = answers["component-type"];
+inquirer.prompt(questions).then((answers) => {
+  const componentName = answers["component-name"];
+  const componentType = answers["component-type"];
+  const withStory = answers["with-story"];
+  const withTransformation = answers["with-transformation"];
 
-    if (!fs.existsSync(baseDir)) {
-      fs.mkdirSync(baseDir);
-    }
-    const componentStylesheet = answers["component-scss"];
-
-    createBladeComponentFiles(componentName, componentType, componentStylesheet, templatesDir, baseDir);
-  });
-} else {
-  const baseDir = argv.dir || "components";
-  const templatesDir = `${__dirname}/react-typescript-templates`;
-
-  let folderQuestion = {
-    name: "component-type",
-    type: "list",
-    message: "React component folder:",
-    choices: [],
-  };
-
-  const foldersInBaseDir = fs.readdirSync(baseDir);
-
-  if (foldersInBaseDir.length > 0) {
-    folderQuestion.choices = foldersInBaseDir;
+  if (!fs.existsSync(baseDir)) {
+    fs.mkdirSync(baseDir);
   }
 
-  const questions = [
-    folderQuestion,
-    {
-      name: "component-name",
-      type: "input",
-      message: "Component name:",
-      validate: function (input) {
-        if (/^([A-Za-z\-\_\d])+$/.test(input)) return true;
-        else return "Component name may only include letters, numbers, underscores and dashes.";
-      },
-    },
-    {
-      name: "with-story",
-      type: "confirm",
-      message: "Include storybook and dummy files?",
-      default: true,
-    },
-    {
-      name: "with-transformation",
-      type: "confirm",
-      message: "Include transformation file?",
-      default: false,
-    },
-  ];
+  createReactComponentFiles(componentName, componentType, withStory, withTransformation, templatesDir, baseDir);
+});
 
-  inquirer.prompt(questions).then((answers) => {
-    const componentName = answers["component-name"];
-    const componentType = answers["component-type"];
-    const withStory = answers["with-story"];
-    const withTransformation = answers["with-transformation"];
-
-    if (!fs.existsSync(baseDir)) {
-      fs.mkdirSync(baseDir);
-    }
-
-    createReactComponentFiles(componentName, componentType, withStory, withTransformation, templatesDir, baseDir);
-  });
-}
 
 function createReactComponentFiles(componentName, componentType, withStory, withTransformation, templatesDir, baseDir) {
   const filesToCreate = fs.readdirSync(templatesDir);

@@ -1,15 +1,15 @@
 import React from 'react';
-import { Story } from "@storybook/react";
-import COMPONENTNAME, { COMPONENTNAMEProps } from './COMPONENTNAME';
+import type { Meta, StoryObj } from '@storybook/react';
+import COMPONENTNAME from './COMPONENTNAME';
 import COMPONENTNAMEDummy from './COMPONENTNAME.dummy';
 
-export default {
+const meta: Meta<typeof COMPONENTNAME> = {
     title: 'COMPONENTTYPE/COMPONENTNAME',
     component: COMPONENTNAME,
 };
 
-const Template: Story<COMPONENTNAMEProps> = args => <COMPONENTNAME {...args} />;
+export default meta;
 
-export const base = Template.bind({});
-
-base.args = COMPONENTNAMEDummy;
+export const Primary: StoryObj<typeof COMPONENTNAME> = {
+    args: COMPONENTNAMEDummy,
+};
