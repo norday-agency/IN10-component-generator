@@ -1,4 +1,4 @@
-import COMPONENTNAME, { COMPONENTNAMEProps } from "./COMPONENTNAME";
+import { COMPONENTNAMEProps } from "./COMPONENTNAME";
 
 const COMPONENTNAMETransform = (data: any): COMPONENTNAMEProps => ({
     ...data,
