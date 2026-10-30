@@ -23,7 +23,7 @@
   "homepage": "https://github.com/IN10/IN10-component-generator#readme",
   "dependencies": {
     "fs": "0.0.1-security",
-    "inquirer": "^7.0.0",
+    "inquirer": "^14.2.5",
     "replace-in-file": "^3.4.2",
     "yargs": "^15.0.2"
   }
